@@ -1,0 +1,122 @@
+<?php
+
+namespace App\Core\Domains\Admin\Models;
+
+use App\Core\Domains\Media\Models\Media;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Model;
+
+class Setting extends Model
+{
+    public int $cacheFor = 86400; // Cache 24h
+
+    protected $fillable = ['group', 'key', 'value', 'type', 'description', 'is_locked'];
+
+    protected static function booted() {
+        static::updated(fn () => Cache::forget('core.settings.all'));
+        static::created(fn () => Cache::forget('core.settings.all'));
+    }
+
+    /**
+     * Magic accessor to retrieve the value in the correct type.
+     * Ex: Setting::find('maintenance_mode')->formatted_value returns a boolean true/false
+     */
+    public function getFormattedValueAttribute()
+    {
+        $value = $this->value;
+
+        return match ($this->type) {
+            'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
+            'integer' => (int) $value,
+            'float'   => (float) $value,
+            'array', 'json' => json_decode($value, true),
+            default   => $value,
+        };
+    }
+    
+    /**
+     * Static helper to retrieve a config quickly
+     * Usage: Setting::get('app_name', 'Crivalide Default');
+     */
+    public static function get(string $key, $default = null)
+    {
+        $exist = Schema::hasTable('settings');
+
+        if(!$exist)
+        {
+            return $default;
+        }
+        $settings = Cache::rememberForever('core.settings.all', function () {
+            return self::all()->keyBy('key');
+        });
+
+        if ($settings->has($key)) {
+            $setting = $settings[$key];
+            return self::castValue($setting->value, $setting->type);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Save an option
+     */
+    public static function set(string $key, $value, string $type = 'string', string $group = 'general',string $description = '',bool $is_locked = false): void
+    {
+        self::updateOrCreate(
+            ['key' => $key],
+            [
+                'value' => $value,
+                'type' => $type,
+                'group' => $group,
+                'description'=> $description,
+                'is_locked' => $is_locked
+            ]
+        );
+    }
+    public static function getPublicSettings(): array
+    {
+        // On définit la liste des clés qu'on veut rendre accessibles au JS
+        $keys = [
+            'app_name', 
+            'app_url', 
+            'app_logo', 
+            'app_favicon', 
+            'app_locale',
+        ];
+
+        // On construit le tableau en récupérant chaque valeur (depuis le cache)
+        $publicSettings = [];
+        foreach ($keys as $key) {
+            $publicSettings[$key] = self::get($key);
+        }
+
+        // On peut ajouter des valeurs par défaut si certaines sont nulles
+        $publicSettings['app_name'] = $publicSettings['app_name'] ?? config('app.name');
+        $publicSettings['app_logo'] = $publicSettings['app_logo'] ?? '/core/assets/files/images/logo.png';
+        $publicSettings['app_favicon'] = $publicSettings['app_favicon'] ?? '/core/assets/files/images/favicon.ico';
+
+        return $publicSettings;
+    }
+
+    private static function castValue($value, $type)
+    {
+        return match ($type) {
+            'boolean', 'bool' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
+            'integer', 'int' => (int) $value,
+            'json', 'array' => json_decode($value, true),
+            'media'=> self::getMediaUrl($value),
+            default => $value,
+        };
+    }
+
+    private static function getMediaUrl($value): string|null
+    {
+        $media  = Media::find($value);
+        
+        if($media){ return $media->getFullUrl();}
+
+        return null;
+    }
+}
