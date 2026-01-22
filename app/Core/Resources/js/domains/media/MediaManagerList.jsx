@@ -33,11 +33,11 @@ export default function MediaManagerList() {
                 <div className="flex bg-white p-1 rounded-2xl border shadow-sm">
                     <button 
                         onClick={() => { setViewMode('active'); updateFilter('status', 'active'); }}
-                        className={cn("px-6 py-2 rounded-xl text-xs font-bold transition-all", viewMode === 'active' ? "bg-slate-900 text-white" : "text-slate-400")}
+                        className={cn("px-6 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer", viewMode === 'active' ? "bg-slate-900 text-white" : "text-slate-400")}
                     > Actifs </button>
                     <button 
                         onClick={() => { setViewMode('trash'); updateFilter('status', 'trash'); }}
-                        className={cn("px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2", viewMode === 'trash' ? "bg-red-600 text-white" : "text-slate-400")}
+                        className={cn("px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer", viewMode === 'trash' ? "bg-red-600 text-white" : "text-slate-400")}
                     > <Trash2 className="w-3.5 h-3.5" /> Corbeille </button>
                 </div>
             </div>
@@ -66,7 +66,7 @@ export default function MediaManagerList() {
 
                 <button 
                     onClick={() => updateFilter('sort_order', filters.sort_order === 'desc' ? 'asc' : 'desc')}
-                    className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors text-zinc-600"
+                    className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors text-zinc-600 cursor-pointer"
                 >
                     {filters.sort_order === 'desc' ? <ArrowDown className="w-4 h-4" /> : <ArrowUp className="w-4 h-4" />}
                 </button>

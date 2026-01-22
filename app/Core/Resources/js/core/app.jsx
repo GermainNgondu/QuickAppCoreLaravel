@@ -27,7 +27,6 @@ const queryClient = new QueryClient({
 
 /**
  * SCANNER DE COMPOSANTS (Importation Globale)
- * On scanne le Core et le dossier Features externe.
  */
 const globImports = import.meta.glob([
     '../components/composite/**/*.jsx',
@@ -103,9 +102,9 @@ export async function mountIslands(container = document) {
  * INITIALISATION AU CHARGEMENT DU DOM
  */
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Chargement des traductions (via window.locale défini en Blade)
+    // Chargement des traductions (via window.locale défini en Blade)
     await loadTranslations(window.App?.locale || 'en');
     
-    // 2. Montage des composants React
+    // Montage des composants React
     await mountIslands(document);
 });

@@ -10,7 +10,7 @@ export function GlobalCommandPalette() {
     const [open, setOpen] = useState(false);
     const { data: commands, isLoading } = useQuery({
         queryKey: ['commands'],
-        queryFn: () => axios.get('/admin/commands').then(res => res.data.data)
+        queryFn: () => axios.get('/api/admin/commands').then(res => res.data.data)
     });
 
     const groups = commands ? [...new Set(commands.map(c => c.group))] : [];

@@ -9,7 +9,7 @@ export function useMedia(filters = {}) {
     const libraryQuery = useInfiniteQuery({
         queryKey: ['media', 'library', filters],
         queryFn: async ({ pageParam = 1 }) => {
-            const { data } = await axios.get('/admin/media', {
+            const { data } = await axios.get('/api/media/list', {
                 params: { ...filters, page: pageParam }
             });
             return data;
@@ -23,7 +23,7 @@ export function useMedia(filters = {}) {
     // 2. UPLOAD DE FICHIER LOCAL
     const uploadMutation = useMutation({
         mutationFn: async (formData) => {
-            const { data } = await axios.post('/api/admin/media/upload', formData, {
+            const { data } = await axios.post('/api/media/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             return data;
@@ -74,7 +74,7 @@ export function useMedia(filters = {}) {
     // 6. SUPPRESSION GROUPÉE (Soft Delete / Corbeille)
     const bulkDeleteMutation = useMutation({
         mutationFn: async (ids) => {
-            const { data } = await axios.delete('/api/admin/media/bulk-delete', { data: { ids } });
+            const { data } = await axios.delete('/api/media/bulk-delete', { data: { ids } });
             return data;
         },
         onSuccess: () => {
@@ -86,7 +86,7 @@ export function useMedia(filters = {}) {
     // 7. RESTAURATION DEPUIS LA CORBEILLE
     const restoreMutation = useMutation({
         mutationFn: async (ids) => {
-            const { data } = await axios.post('/api/admin/media/restore', { ids });
+            const { data } = await axios.post('/api/media/restore', { ids });
             return data;
         },
         onSuccess: () => {

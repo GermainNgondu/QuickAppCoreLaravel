@@ -12,7 +12,7 @@ class ListMediaLibraryAction extends BaseAction
 {
     public function handle(): JsonResponse
     {
-        $query = Media::query()->latest();
+        $query = Media::query();
 
         if (request()->input('status') === 'trash') {
             $query->onlyTrashed();
@@ -46,10 +46,11 @@ class ListMediaLibraryAction extends BaseAction
         // TRI DYNAMIQUE
         $sortBy = request()->input('sort_by', 'created_at');
         $sortOrder = request()->input('sort_order', 'desc');
-        
+       
         // Sécurité sur les colonnes de tri
         if (in_array($sortBy, ['name', 'size', 'created_at'])) {
-            $query->orderBy($sortBy, $sortOrder);
+
+            $query->orderBy($sortBy, $sortOrder); 
         }
 
         $media = $query->paginate(request()->input('per_page', 24));
