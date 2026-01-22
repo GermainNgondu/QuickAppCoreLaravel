@@ -15,8 +15,6 @@ class MediaServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // On enregistre le MediaManager en Singleton pour qu'il garde 
-        // les instances de drivers en mémoire durant la requête.
         $this->app->singleton(MediaManager::class, function ($app) {
             return new MediaManager();
         });
@@ -27,23 +25,10 @@ class MediaServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerRoutes();
         $this->registerMenu();
         $this->registerCustomMediaModel();
     }
 
-    /**
-     * Charge les routes web du domaine.
-     */
-    protected function registerRoutes(): void
-    {
-        Route::middleware('web')
-            ->group(__DIR__ . '/../Routes/web.php');
-    }
-
-    /**
-     * Inscrit le domaine dans le MenuManager global.
-     */
     protected function registerMenu(): void
     {
         Menu::register([

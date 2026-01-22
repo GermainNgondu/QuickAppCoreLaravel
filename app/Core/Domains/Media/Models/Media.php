@@ -72,7 +72,7 @@ class Media extends SpatieMedia
     }
 
     /**
-     * Taille du fichier formatée (ex: 1.2 MB).
+     * Taille du fichier formatée
      */
     public function getSizeHumanAttribute(): string
     {

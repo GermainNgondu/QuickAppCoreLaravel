@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Domains\Media\Actions;
+namespace App\Core\Domains\Media\Actions\Upload;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
@@ -105,9 +105,6 @@ class ImportMediaFromUrlAction
         return $matches[1];
     }
 
-    /**
-     * Interface pour l'appel via API.
-     */
     public function asController(): MediaData
     {
         $media = $this->handle(

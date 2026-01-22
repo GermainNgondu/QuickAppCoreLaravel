@@ -2,7 +2,7 @@
 
 namespace App\Core\Domains\Media\Actions;
 
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Core\Domains\Media\MediaManager;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -12,29 +12,18 @@ class SearchMediaAction
 
     public function __construct(protected MediaManager $manager) {}
 
-    public function asController(Request $request)
+    public function handle(): JsonResponse
     {
-        // On valide le terme de recherche
-        $request->validate([
+        request()->validate([
             'query'  => 'required|string|min:3',
-            'source' => 'required|string', // ex: 'unsplash'
+            'source' => 'required|string',
             'page'   => 'integer'
         ]);
 
-        return $this->handle(
-            $request->input('source'),
-            $request->input('query'),
-            $request->input('page', 1)
-        );
-    }
-
-    public function handle(string $source, string $query, int $page)
-    {
-        // On demande au manager de nous donner le driver et d'exécuter la recherche
-        $results = $this->manager->driver($source)->search($query, $page);
+        $results = $this->manager->driver(request('source'))->search(request('query'), request('page', 1));
 
         return response()->json([
-            'source' => $source,
+            'source' => request('source'),
             'results' => $results
         ]);
     }

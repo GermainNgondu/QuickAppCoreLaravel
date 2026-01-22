@@ -4,3 +4,4 @@ export * from './useDebounce';
 export * from './useAdminConfig';
 export * from './useMedia';
 export * from './useUpdater';
+export * from './useMediaCollections'

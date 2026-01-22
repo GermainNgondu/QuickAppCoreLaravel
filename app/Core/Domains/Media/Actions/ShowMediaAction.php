@@ -13,20 +13,11 @@ class ShowMediaAction
 
     /**
      * Gère la requête de récupération d'un média unique.
-     * * @param Media $media Le modèle média injecté automatiquement via l'ID dans l'URL
+     * @param Media $media
      * @return JsonResponse
      */
-    public function handle(Media $media): MediaData
+    public function handle(Media $media): JsonResponse
     {
-        // On retourne le DTO MediaData qui formate l'URL, le type et les métadonnées
-        return MediaData::from($media);
-    }
-
-    /**
-     * Interface pour l'utilisation en tant que contrôleur.
-     */
-    public function asController(Media $media): JsonResponse
-    {
-        return response()->json($this->handle($media));
+        return response()->json(MediaData::from($media));
     }
 }

@@ -3,21 +3,16 @@
 namespace App\Core\Domains\Media\Actions;
 
 use App\Core\Domains\Media\Models\Media;
+use Illuminate\Http\JsonResponse;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class DeleteMediaAction
 {
     use AsAction;
 
-    public function handle(Media $media)
+    public function handle(Media $media): JsonResponse
     {
-        // Spatie gère automatiquement la suppression des fichiers physiques et des conversions
-        return $media->delete();
-    }
-
-    public function asController(Media $media)
-    {
-        $this->handle($media);
+        $media->delete();
 
         return response()->json([
             'message' => 'Média supprimé définitivement',

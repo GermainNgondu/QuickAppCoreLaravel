@@ -2,6 +2,7 @@
 
 namespace App\Core\Infrastructure\Providers;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -37,9 +38,6 @@ class CoreServiceProvider extends ServiceProvider
         foreach ($manifest['providers'] as $provider) {
             $this->app->register($provider);
         }
-
-        // Enregistrement des Providers internes fixes
-        $this->app->register(EventServiceProvider::class);
 
         // Fusion des configurations Spatie/Core
         $this->mergeSystemConfigs();
@@ -111,6 +109,16 @@ class CoreServiceProvider extends ServiceProvider
             if (!File::isDirectory($root)) continue;
 
             foreach (File::directories($root) as $modulePath) {
+                
+                if(Str::contains($modulePath, 'Core/Features'))
+                {
+                    if (!File::exists($modulePath . '/module.json')) continue; 
+            
+                    $moduleConfig = json_decode(File::get($modulePath . '/module.json'), true);
+                    if (!($moduleConfig['active'] ?? true)) continue;
+                }
+
+
                 $id = basename($modulePath);
 
                 // --- Providers ---
@@ -161,7 +169,7 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function loadRoutes(array $routeData): void
     {
-        $router = \Route::middleware($routeData['type']);
+        $router = Route::middleware($routeData['type']);
         
         if ($routeData['prefix']) {
             $router->prefix($routeData['prefix']);

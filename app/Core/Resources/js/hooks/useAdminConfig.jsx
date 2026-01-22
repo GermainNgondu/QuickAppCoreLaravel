@@ -5,7 +5,7 @@ export function useAdminConfig() {
     return useQuery({
         queryKey: ['admin', 'bootstrap'],
         queryFn: async () => {
-            const { data } = await axios.get('/admin/bootstrap');
+            const { data } = await axios.get('/api/admin/bootstrap');
             return data;
         },
         staleTime: Infinity,

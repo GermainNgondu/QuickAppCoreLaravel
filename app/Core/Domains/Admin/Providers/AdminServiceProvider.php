@@ -33,8 +33,6 @@ class AdminServiceProvider extends ServiceProvider
         }
 
         $this->bootCommands();
-        $this->registerRoutes();
-        $this->registerMigrations();
 
         Menu::register([
             'label' => ucfirst(__('dashboard')),
@@ -42,19 +40,6 @@ class AdminServiceProvider extends ServiceProvider
             'route' => 'admin.dashboard',
             'order' => 1,
         ]);
-    }
-
-    /**
-     * Charge les routes du domaine.
-     */
-    protected function registerRoutes()
-    {
-        Route::middleware('web')
-            ->group(__DIR__ . '/../Routes/web.php');
-
-        Route::prefix('api/admin')
-            ->middleware('api')
-            ->group(__DIR__ . '/../Routes/api.php');
     }
 
     /**

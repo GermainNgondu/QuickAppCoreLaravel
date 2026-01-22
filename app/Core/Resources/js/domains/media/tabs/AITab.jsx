@@ -16,7 +16,7 @@ export function AITab({ onSelect }) {
     const generateMutation = useMutation({
         mutationFn: async (promptText) => {
             // Appelle GenerateAiMediaAction côté Laravel
-            const { data } = await axios.post('/admin/media/ai-generate', { 
+            const { data } = await axios.post('/api/admin/media/ai-generate', { 
                 prompt: promptText,
                 size: '1024x1024' // Optionnel, géré par le DTO backend
             });

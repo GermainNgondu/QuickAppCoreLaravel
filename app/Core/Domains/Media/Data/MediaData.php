@@ -16,11 +16,30 @@ class MediaData extends Data
         public ?string $thumb_url,
         public string $type,
         public string $mime_type,
-        public string $size_human,
+        public ?string $size_human,
         public ?string $extension,
         public ?array $custom_properties,
         public Carbon $created_at,
     ) {}
+
+    public static function fromUploadedMedia(\Spatie\MediaLibrary\MediaCollections\Models\Media $media): self
+    {
+        return new self(
+            id: $media->id,
+            name: $media->name,
+            file_name: $media->file_name,
+            url: $media->getFullUrl(),
+            thumb_url: $media->hasGeneratedConversion('thumb') 
+                ? $media->getFullUrl('thumb') 
+                : $media->getFullUrl(),
+            type: $media->type,
+            mime_type: $media->mime_type,
+            size_human: $media->size,
+            extension: pathinfo($media->file_name, PATHINFO_EXTENSION),
+            custom_properties: $media->custom_properties,
+            created_at: $media->created_at,
+        );
+    }
 
     /**
      * Transforme le modèle Eloquent en objet Data (DTO) pour le Frontend.

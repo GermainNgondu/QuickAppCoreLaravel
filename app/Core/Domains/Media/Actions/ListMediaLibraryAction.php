@@ -3,13 +3,14 @@
 namespace App\Core\Domains\Media\Actions;
 
 use App\Core\Actions\BaseAction;
-use App\Core\Framework\UI\UIPage;
+use Illuminate\Http\JsonResponse;
 use App\Core\Domains\Media\Models\Media;
 use App\Core\Domains\Media\Data\MediaData;
 
+
 class ListMediaLibraryAction extends BaseAction
 {
-    public function handle()
+    public function handle(): JsonResponse
     {
         $query = Media::query()->latest();
 
@@ -60,28 +61,5 @@ class ListMediaLibraryAction extends BaseAction
                 'last_page'    => $media->lastPage(),
             ]
         ]);        
-    }
-
-    /**
-     * Gère la liste des médias.
-     * Utilisée par : La page de gestion (Table) et le MediaPicker (JSON).
-     */
-    public function asController()
-    {
-        // 1. Si la requête attend du JSON (MediaPicker ou rafraîchissement DataTable)
-        if (request()->wantsJson())
-        {
-            return $this->handle();
-        }
-
-        // 2. Si c'est un accès direct via navigateur : on rend la page de gestion
-        return UIPage::make('Médiathèque')
-            ->type('page')
-            ->options([
-                'endpoint' => route('admin.media.index'),
-                'upload_url' => route('admin.media.upload'),
-                'component' => 'Core::media/MediaManagerList'
-            ])
-            ->render();
     }
 }

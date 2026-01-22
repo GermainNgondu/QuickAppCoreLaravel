@@ -13,7 +13,7 @@ export function UnsplashTab({ onSelect }) {
         queryKey: ['unsplash', query],
         queryFn: async () => {
             if (!query) return [];
-            const { data } = await axios.get('/admin/media/search', { params: { source: 'unsplash', query } });
+            const { data } = await axios.get('/api/admin/media/search', { params: { source: 'unsplash', query } });
             return data.results;
         },
         enabled: false // On ne cherche que sur clic/entrée
