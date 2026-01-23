@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LibraryTab } from './tabs/LibraryTab';
 import { MediaViewerModal } from './components/MediaViewerModal';
 import { MediaUploadWizard } from './components/MediaUploadWizard';
+import { CollectionSelector } from './components/CollectionSelector';
 import { Plus, Search, Trash2, ArrowDown, ArrowUp, } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger, Button } from '@ui';
 import { cn } from '@lib';
@@ -53,14 +54,11 @@ export default function MediaManagerList() {
                     />
                 </div>
 
-                <select 
-                    className="bg-slate-50 border-none rounded-xl text-xs font-bold p-3 outline-none"
-                    onChange={(e) => updateFilter('collection', e.target.value)}
-                >
-                    <option value="">Toutes les collections</option>
-                    <option value="library">Bibliothèque</option>
-                    <option value="products">Produits</option>
-                </select>
+                <CollectionSelector 
+                    value={filters.collection}
+                    onChange={(val) => updateFilter('collection', val)}
+                    className="bg-slate-50 border-none rounded-xl text-xs font-bold p-3 outline-none cursor-pointer min-w-[180px]"
+                />
 
                 <div className="h-8 w-px bg-slate-100" />
 
@@ -73,8 +71,8 @@ export default function MediaManagerList() {
 
                 <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-zinc-600 text-white rounded-2xl px-6 py-6 gap-2 shadow-lg shadow-zinc-100 cursor-pointer">
-                            <Plus className="w-5 h-5" /> Ajouter
+                        <Button className="bg-zinc-600 text-white rounded-2xl px-6 py-6 gap-2 shadow-lg shadow-zinc-100 cursor-pointer capitalize">
+                            <Plus className="w-5 h-5" /> ajouter
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl p-0 border-none bg-transparent shadow-none [&>button]:hidden">

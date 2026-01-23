@@ -23,7 +23,7 @@ Route::middleware(['web','auth'])->as('admin.media.')->group(function () {
     // Route principale pour le MediaPicker et le Gestionnaire
     Route::get('/list', ListMediaLibraryAction::class)->name('list');
 
-    Route::get('/{media}', ShowMediaAction::class)->name('show');
+    
 
     // Ingestion
     Route::post('/upload', UploadMediaAction::class)->name('upload');
@@ -56,5 +56,5 @@ Route::middleware(['web','auth'])->as('admin.media.')->group(function () {
             ->forceDelete();
         return response()->json(['message' => 'Suppression définitive réussie']);
     })->name('force-delete');
-
+    Route::get('/{media}', ShowMediaAction::class)->name('show');
 });
