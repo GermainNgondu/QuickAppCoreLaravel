@@ -2,6 +2,7 @@ import './bootstrap';
 import React, { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ComponentErrorBoundary } from '@shared';
 import { loadTranslations } from '@lib';
 import { Toaster } from 'sonner';
 
@@ -87,9 +88,11 @@ export async function mountIslands(container = document) {
             
             root.render(
                 <QueryClientProvider client={queryClient}>
-                    <Suspense fallback={<PageLoader />}>
-                        <Component {...props} />
-                    </Suspense>
+                    <ComponentErrorBoundary componentName={name}>
+                        <Suspense fallback={<PageLoader />}>
+                            <Component {...props} />
+                        </Suspense>
+                    </ComponentErrorBoundary>
                     <Toaster position="top-right" richColors />
                 </QueryClientProvider>
             );

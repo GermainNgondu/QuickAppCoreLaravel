@@ -7,6 +7,7 @@ import { BladeContent } from './BladeContent';
 import { EmptyPagePlaceholder } from './EmptyPagePlaceholder';
 import { GlobalCommandPalette } from './GlobalCommandPalette';
 import { FieldWrapper } from './FieldWrapper';
+import { ErrorBundary } from './ErrorBundary';
 
 export { 
     Table, 
@@ -17,5 +18,6 @@ export {
     BladeContent, 
     EmptyPagePlaceholder,
     GlobalCommandPalette,
-    FieldWrapper 
+    FieldWrapper,
+    ErrorBundary 
 };

@@ -1,59 +1,68 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# QuickAppCore Laravel 🚀
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+QuickAppCore est un framework d'application modulaire bâti sur Laravel, conçu pour la rapidité de développement, la maintenabilité et la robustesse. Il utilise une architecture de **Domaines** et de **Features** avec une injection dynamique de composants React (Islands Architecture).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🏗️ Architecture du Noyau (Core)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Le projet est structuré pour séparer le code infrastructurel de la logique métier :
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* **Core/Infrastructure** : Gestion globale (Providers, Console, Database).
+* **Core/Domains** : Modules fondamentaux de l'application (Admin, Users, Media).
+* **Features** : Fonctionnalités optionnelles ou plugins activables via `module.json`.
 
-## Learning Laravel
+### 🛠️ Système de Découverte (Module Discovery)
+Le framework scanne automatiquement les domaines et les fonctionnalités pour enregistrer les ServiceProviders, les routes, les migrations et les ressources UI.
+* **Production** : Utilisez `php artisan core:cache` pour générer un manifeste statique ultra-rapide.
+* **Développement** : Le scan est dynamique pour refléter vos changements instantanément.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ⚡ Développement Backend
 
-## Laravel Sponsors
+### 🔄 Actions & Traçabilité
+Toute la logique métier doit être encapsulée dans des **Actions** héritant de `BaseAction`.
+* **Transactions** : Utilisez `runTransactional()` pour garantir l'intégrité des données.
+* **Audit Trail** : Utilisez `runLogged($description, ...$args)` pour enregistrer automatiquement l'activité via Spatie ActivityLog.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 📦 Ressources UI (`BaseResource`)
+Les ressources définissent comment vos données sont gérées et affichées :
+* **Sécurité** : Définissez un `permissionPrefix()` pour automatiser les droits d'accès.
+* **Validation** : Validation stricte via `dataClass()` (Spatie Laravel Data).
+* **Actions** : Ajoutez des boutons personnalisés via la méthode `actions()`.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## ⚛️ Frontend : React Islands
 
-## Contributing
+QuickAppCore utilise une **Architecture en Îlots** pour intégrer React dans Blade sans la lourdeur d'une SPA complète.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+* **Rendu** : Utilisez l'attribut `data-react-component="Namespace::Chemin/Composant"` dans vos vues Blade pour monter un composant.
+* **Résilience** : Chaque composant est isolé par un `ErrorBoundary`. Si un widget plante, le reste de la page reste interactif.
+* **i18n** : Système de traduction partagé entre PHP et React avec mise en cache locale.
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🚀 Commandes Utiles
 
-## Security Vulnerabilities
+| Commande | Description |
+| :--- | :--- |
+| `php artisan core:make-feature {Name}` | Génère la structure complète d'une feature. |
+| `php artisan core:cache` | Génère le manifeste de cache des modules (Recommandé en Prod). |
+| `php artisan setup` | Installation complète (Migrations, Clés, NPM). |
+| `npm run dev` | Lance Vite pour la compilation des assets React. |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🧪 Maintenance & Tests
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Le projet utilise **Pest PHP** pour les tests.
+* Chaque nouvelle ressource doit être testée avec le trait `InteractsWithResources` pour valider sa structure.
+* Exécutez `php artisan test` pour lancer la suite complète.
+
+---
+
+## 📄 Licence
+
+Ce framework est un logiciel open-source sous licence [MIT](https://opensource.org/licenses/MIT).

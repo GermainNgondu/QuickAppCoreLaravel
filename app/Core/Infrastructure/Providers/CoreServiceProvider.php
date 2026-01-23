@@ -80,8 +80,10 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function getManifest(): array
     {
-        // En local, on scanne à chaque fois pour le confort de dev.
-        // En prod, on utilise le cache "forever".
+        $cachePath = base_path('bootstrap/cache/core_manifest.php');
+
+        if (File::exists($cachePath)) { return require $cachePath; }
+
         if (app()->environment('local')) {
             return $this->scanModules();
         }
@@ -102,22 +104,17 @@ class CoreServiceProvider extends ServiceProvider
             'seeders'    => [],
         ];
 
-        // On scanne les deux dossiers racines
         $paths = [app_path('Core/Domains'), app_path('Features')];
 
         foreach ($paths as $root) {
             if (!File::isDirectory($root)) continue;
 
             foreach (File::directories($root) as $modulePath) {
-                
-                if(Str::contains($modulePath, 'Core/Features'))
-                {
-                    if (!File::exists($modulePath . '/module.json')) continue; 
-            
+
+                if (File::exists($modulePath . '/module.json')) {
                     $moduleConfig = json_decode(File::get($modulePath . '/module.json'), true);
                     if (!($moduleConfig['active'] ?? true)) continue;
                 }
-
 
                 $id = basename($modulePath);
 
@@ -129,30 +126,35 @@ class CoreServiceProvider extends ServiceProvider
                 }
 
                 // --- Routes ---
-                if (File::exists($modulePath . '/Routes/web.php')) {
-                    $manifest['routes'][] = ['path' => $modulePath . '/Routes/web.php', 'type' => 'web', 'prefix' => null];
-                }
-                if (File::exists($modulePath . '/Routes/api.php')) {
-                    $manifest['routes'][] = ['path' => $modulePath . '/Routes/api.php', 'type' => 'api', 'prefix' => 'api/' . strtolower($id)];
+                foreach (['web', 'api'] as $type) {
+                    $routeFile = "{$modulePath}/Routes/{$type}.php";
+                    if (File::exists($routeFile)) {
+                        $manifest['routes'][] = [
+                            'path' => $routeFile,
+                            'type' => $type,
+                            'prefix' => ($type === 'api') ? 'api/' . strtolower($id) : null
+                        ];
+                    }
                 }
 
                 // --- Migrations ---
-                if (File::isDirectory($modulePath . '/Database/Migrations')) {
-                    $manifest['migrations'][] = $modulePath . '/Database/Migrations';
+                $migrationPath = $modulePath . '/Database/Migrations';
+                if (File::isDirectory($migrationPath)) {
+                    $manifest['migrations'][] = $migrationPath;
                 }
 
-                //---Seeders ---
+                // --- Seeders ---
                 $seederPath = $modulePath . '/Database/Seeders';
                 if (File::isDirectory($seederPath)) {
                     foreach (File::files($seederPath) as $file) {
-                        // On enregistre le Namespace complet du Seeder
                         $manifest['seeders'][] = $this->getNamespace($file->getPathname());
                     }
                 }
 
-                // --- Resources ---
-                if (File::isDirectory($modulePath . '/Resources')) {
-                    foreach (File::allFiles($modulePath . '/Resources') as $file) {
+                // --- Resources (UI Framework) ---
+                $resourcePath = $modulePath . '/Resources';
+                if (File::isDirectory($resourcePath)) {
+                    foreach (File::allFiles($resourcePath) as $file) {
                         if (str_ends_with($file->getFilename(), 'Resource.php')) {
                             $manifest['resources'][] = $this->getNamespace($file->getPathname());
                         }

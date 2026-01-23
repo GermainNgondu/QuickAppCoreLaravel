@@ -47,6 +47,10 @@ abstract class BaseResource
      */
     abstract public function fields(): array;
 
+    public function actions(): array { return []; }
+
+    abstract public function permissionPrefix(): string;
+
     /**
      * Configuration de la vue détail (Optionnel)
      */
