@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })
+    ->withCommands([
+        \App\Core\Infrastructure\Console\Commands\CoreManifestCacheCommand::class,
+        \App\Core\Infrastructure\Console\Commands\CoreMakeFeatureCommand::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

@@ -36,37 +36,44 @@ const globImports = import.meta.glob([
     '../../../../Features/**/Resources/js/components/**/*.jsx' 
 ], { eager: false });
 
+const resolutionCache = new Map();
+
 /**
  * RÉSOLVEUR DE CHEMINS (The Brain)
  */
 const resolveComponent = (name) => {
     if (!name) return null;
 
+    if (resolutionCache.has(name)) return resolutionCache.get(name);
+
     const [namespace, componentPath] = name.split('::');
-    
-    // On nettoie le chemin au cas où on aurait mis des slashs au début ou des extensions
     const cleanPath = componentPath.replace(/^\/|\.jsx$/g, '');
+    let resolved = null;
 
     if (namespace === 'Core') {
         const possiblePaths = [
             `../components/composite/${componentPath}.jsx`,
             `../domains/${componentPath}.jsx`,
             `../layouts/${componentPath}.jsx`,
-            `../${cleanPath}.jsx`//la recherche directe au cas où le chemin complet est passé
+            `../${cleanPath}.jsx`
         ];
         
-        for (const path of possiblePaths) {
-            if (globImports[path]) return globImports[path];
-        }
+        const match = possiblePaths.find(p => globImports[p]);
+        resolved = match ? globImports[match] : null;
     } 
     
     else {
         const path = `../../../../Features/${namespace}/Resources/js/components/${componentPath}.jsx`;
-        if (globImports[path]) return globImports[path];
+        resolved = globImports[path] || null;
     }
 
-    console.error(`[RESOLVER] Composant introuvable : ${name}`);
-    return null;
+    if (resolved) {
+        resolutionCache.set(name, resolved);
+    } else {
+        console.error(`[RESOLVER] Composant introuvable : ${name}`);
+    }
+
+    return resolved;
 };
 
 /**

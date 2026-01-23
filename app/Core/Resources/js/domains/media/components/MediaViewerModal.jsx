@@ -50,7 +50,6 @@ export function MediaViewerModal({ media, isOpen, onClose }) {
                     {/* Zone d'édition et infos */}
                     <div className="flex-1 flex flex-col border-l border-slate-100">
                         <div className="p-6 border-b flex justify-between items-center bg-slate-50/50">
-                            <DialogTitle className="text-sm font-bold truncate pr-4">{media.file_name}</DialogTitle>
                             <Button 
                                 variant="ghost" size="sm" 
                                 onClick={() => setIsEditing(!isEditing)}
@@ -58,6 +57,8 @@ export function MediaViewerModal({ media, isOpen, onClose }) {
                             >
                                 {isEditing ? <X className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
                             </Button>
+                            <DialogTitle className="text-sm font-bold truncate pr-4">{media.file_name}</DialogTitle>
+                            
                         </div>
 
                         <div className="flex-1 p-6 space-y-6 overflow-y-auto">

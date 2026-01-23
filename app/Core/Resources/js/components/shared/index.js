@@ -7,7 +7,7 @@ import { BladeContent } from './BladeContent';
 import { EmptyPagePlaceholder } from './EmptyPagePlaceholder';
 import { GlobalCommandPalette } from './GlobalCommandPalette';
 import { FieldWrapper } from './FieldWrapper';
-import { ErrorBundary } from './ErrorBundary';
+import { ComponentErrorBoundary } from './ErrorBoundary';
 
 export { 
     Table, 
@@ -19,5 +19,5 @@ export {
     EmptyPagePlaceholder,
     GlobalCommandPalette,
     FieldWrapper,
-    ErrorBundary 
+    ComponentErrorBoundary 
 };

@@ -14,14 +14,14 @@ class CoreManifestCacheCommand extends Command
     public function handle()
     {
         $this->info('Scanning modules...');
-        
-        $serviceProvider = app()->make(CoreServiceProvider::class);
+
+        $serviceProvider = new CoreServiceProvider(app());
         $method = new \ReflectionMethod(CoreServiceProvider::class, 'scanModules');
         $method->setAccessible(true);
         $manifest = $method->invoke($serviceProvider);
 
         $path = base_path('bootstrap/cache/core_manifest.php');
-        
+
         $content = '<?php return ' . var_export($manifest, true) . ';';
         File::put($path, $content);
 
